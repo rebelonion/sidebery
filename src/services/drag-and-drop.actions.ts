@@ -1191,6 +1191,13 @@ export function resetOther(): void {
 
 let dragEndedRecentlyTimeout: number | undefined
 
+let relativeMouseX = 0
+let relativeMouseY = 0
+export function onDragStart(e: DragEvent): void {
+  relativeMouseX = e.clientX
+  relativeMouseY = e.clientY + (window.outerHeight - window.innerHeight) //account for window height
+}
+
 export async function onDragEnd(e: DragEvent): Promise<void> {
   resetDragPointer()
   DnD.resetOther()
@@ -1237,13 +1244,22 @@ export async function onDragEnd(e: DragEvent): Promise<void> {
       return
     }
 
+    const mouseX = e.screenX
+    const mouseY = e.screenY
+
     const fromTabs = info.type === DragType.Tabs
     const fromTabsPanel = info.type === DragType.TabsPanel
     const fromBookmarks = info.type === DragType.Bookmarks
     const fromBookmarksPanel = info.type === DragType.BookmarksPanel
 
     if (fromTabs && info.items?.length) {
-      const dst = { windowId: NEWID, incognito: Windows.incognito, panelId: info.panelId }
+      const dst = {
+        windowId: NEWID,
+        incognito: Windows.incognito,
+        panelId: info.panelId,
+        top: mouseY - relativeMouseY,
+        left: mouseX - relativeMouseX,
+      }
       if (mode === 'copy') Tabs.open(info.items, dst)
       else Tabs.move(info.items, {}, dst)
     }

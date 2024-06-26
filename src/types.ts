@@ -214,6 +214,8 @@ export interface DstPlaceInfo {
   containerId?: string
   windowId?: ID
   incognito?: boolean
+  left?: number
+  top?: number
   windowChooseConf?: WindowChoosingDetails
   discarded?: boolean
 }

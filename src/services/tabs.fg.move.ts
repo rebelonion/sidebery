@@ -57,7 +57,7 @@ export async function move(
   if (dst.windowId === NEWID) {
     Tabs.detachTabs(tabsInfo.map(t => t.id))
     const info = Utils.cloneArray<ItemInfo>(tabsInfo)
-    const conf = { incognito: dst.incognito, tabId: MOVEID }
+    const conf = { incognito: dst.incognito, tabId: MOVEID, top: dst.top, left: dst.left }
     info.forEach(t => (t.panelId = dst.panelId))
     IPC.bg('createWindowWithTabs', info, conf).finally(() => Tabs.detachingTabIds.clear())
     return

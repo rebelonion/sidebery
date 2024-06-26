@@ -22,6 +22,7 @@
   :data-search="!!Search.reactive.value"
   :data-sticky-bookmarks="Settings.state.pinOpenedBookmarksFolder"
   :data-colorized-branches="Settings.state.colorizeTabsBranches"
+  @dragstart="DnD.onDragStart"
   @dragend="DnD.onDragEnd"
   @dragenter="DnD.onDragEnter"
   @dragleave="DnD.onDragLeave"
