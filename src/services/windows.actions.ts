@@ -150,7 +150,24 @@ export async function createWithTabs(
   const defaultContainerId = conf.incognito ? PRIVATE_CONTAINER_ID : DEFAULT_CONTAINER_ID
   let window: browser.windows.Window
   try {
-    window = await browser.windows.create(conf)
+    if (conf.state === 'maximized') {
+      let screenWidth = 800
+      let screenHeight = 600
+      await browser.windows.getCurrent().then(win => {
+        screenWidth = win.width ?? screenWidth
+        screenHeight = win.height ?? screenHeight
+      })
+      conf.state = 'normal' //open in normal state to avoid maximized window in the wrong screen
+      conf.width = screenWidth / 2 //if not set, the window will attempt to open maximized on the wrong screen
+      conf.height = screenHeight / 2
+      window = await browser.windows.create(conf)
+      if (window.id) {
+        //immediately maximize the window after creation
+        await browser.windows.update(window.id, { state: 'maximized' })
+      }
+    } else {
+      window = await browser.windows.create(conf)
+    }
   } catch (err) {
     if (String(err) === 'Error: Extension does not have permission for incognito mode') {
       if (Windows.lastFocusedWinId !== undefined) {

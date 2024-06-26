@@ -216,6 +216,7 @@ export interface DstPlaceInfo {
   incognito?: boolean
   left?: number
   top?: number
+  maximized?: boolean
   windowChooseConf?: WindowChoosingDetails
   discarded?: boolean
 }

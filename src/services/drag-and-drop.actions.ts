@@ -1246,7 +1246,12 @@ export async function onDragEnd(e: DragEvent): Promise<void> {
 
     const mouseX = e.screenX
     const mouseY = e.screenY
-
+    let maximized = false
+    await browser.windows.getCurrent().then(function (window) {
+      if (window.state === 'maximized') {
+        maximized = true
+      }
+    })
     const fromTabs = info.type === DragType.Tabs
     const fromTabsPanel = info.type === DragType.TabsPanel
     const fromBookmarks = info.type === DragType.Bookmarks
@@ -1259,6 +1264,7 @@ export async function onDragEnd(e: DragEvent): Promise<void> {
         panelId: info.panelId,
         top: mouseY - relativeMouseY,
         left: mouseX - relativeMouseX,
+        maximized: maximized,
       }
       if (mode === 'copy') Tabs.open(info.items, dst)
       else Tabs.move(info.items, {}, dst)

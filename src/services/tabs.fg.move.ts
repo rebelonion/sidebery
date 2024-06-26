@@ -12,6 +12,7 @@ import * as IPC from 'src/services/ipc'
 import * as Popups from 'src/services/popups'
 import * as Logs from 'src/services/logs'
 import * as Utils from 'src/utils'
+import WindowState = browser.windows.WindowState
 
 export async function move(
   tabsInfo: DeepReadonly<ItemInfo[]>,
@@ -57,7 +58,14 @@ export async function move(
   if (dst.windowId === NEWID) {
     Tabs.detachTabs(tabsInfo.map(t => t.id))
     const info = Utils.cloneArray<ItemInfo>(tabsInfo)
-    const conf = { incognito: dst.incognito, tabId: MOVEID, top: dst.top, left: dst.left }
+    const windowState = (dst.maximized === true ? 'maximized' : 'normal') as WindowState
+    const conf = {
+      incognito: dst.incognito,
+      tabId: MOVEID,
+      top: dst.top,
+      left: dst.left,
+      state: windowState,
+    }
     info.forEach(t => (t.panelId = dst.panelId))
     IPC.bg('createWindowWithTabs', info, conf).finally(() => Tabs.detachingTabIds.clear())
     return
